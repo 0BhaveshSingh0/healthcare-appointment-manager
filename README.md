@@ -1,3 +1,21 @@
+## 🎥 Video Demonstration
+
+[Watch the Complete Project Demo](https://drive.google.com/file/d/1FvoTj4O-zTMbWs68TinanpkljULQ3iWW/view?usp=sharing)
+
+The video demonstrates the complete working flow of the Healthcare Appointment Manager, including:
+- Demo Patient workflow
+- Demo Doctor workflow
+- Admin dashboard and doctor management
+- Real patient account workflow
+- Google Calendar connection
+- Doctor search and appointment booking
+- Pre-visit symptom submission
+- Google Calendar synchronization
+- Appointment confirmation email
+- Doctor-side appointment management
+- Appointment cancellation
+- Cancellation email notification
+
 # Healthcare Appointment Manager
 
 A comprehensive full-stack application for managing healthcare appointments, pre-visit symptoms, post-visit notes, prescriptions, doctor leaves, and automated notifications with Google Calendar integrations.
