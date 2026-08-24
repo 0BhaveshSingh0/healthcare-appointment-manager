@@ -1,16 +1,7 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const prisma = require('../db/prisma');
 
-// Create reusable transporter object using the default SMTP transport
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.ethereal.email',
-  port: process.env.SMTP_PORT || 587,
-  secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Enqueue an email notification in the database to be processed asynchronously.
@@ -102,12 +93,16 @@ async function processEmailLog(emailLogId) {
 
   try {
     // Attempt to send
-    await transporter.sendMail({
-      from: '"Healthcare Clinic" <no-reply@clinic.com>',
+    const { data, error } = await resend.emails.send({
+      from: "Healthcare Appointment Manager <onboarding@resend.dev>",
       to: emailLog.recipient,
       subject,
       text,
     });
+
+    if (error) {
+      throw new Error(error.message);
+    }
 
     await prisma.emailLog.update({
       where: { id: emailLog.id },
