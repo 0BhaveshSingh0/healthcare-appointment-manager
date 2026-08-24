@@ -2,6 +2,14 @@
 
 A comprehensive full-stack application for managing healthcare appointments, pre-visit symptoms, post-visit notes, prescriptions, doctor leaves, and automated notifications/calendar integrations.
 
+## Live Application
+
+[**Healthcare Appointment Manager — Live Demo**](https://healthcare-appointment-manager-rho-bay.vercel.app)
+
+[**GitHub Repository**](https://github.com/0BhaveshSingh0/healthcare-appointment-manager)
+
+[**Backend API — Render**](https://healthcare-appointment-manager-n4wj.onrender.com)
+
 ## Main Features
 
 - **Authentication & Roles**: Secure JWT-based authentication for Patients, Doctors, and Admins.
@@ -114,20 +122,13 @@ npm run dev
 
 ## Deployment Architecture
 
-The application is designed for the following deployment stack:
+The application is fully deployed using the following modern stack:
 
-- **Frontend**: Vercel
-- **Backend & Background Workers**: Render Web Service or Railway
-  > *Note: Vercel Serverless Functions are not recommended for the backend as they cannot run the continuous background cron jobs required for Medication Reminders and Email Retries.*
-- **Database**: Supabase PostgreSQL
+- **Frontend (Vercel)**: Vercel hosts the React/Vite Single Page Application (SPA).
+- **Backend (Render)**: Render hosts the Node.js/Express backend as a persistent Web Service. This is required because the backend runs continuous background `node-cron` workers for Medication Reminders and Email Retries, which would not work on serverless functions.
+- **Database (Supabase)**: Supabase provides the production PostgreSQL database.
 
-### Production Deployment Steps (Future/Pending)
-
-1. Provision a **Supabase PostgreSQL** database.
-2. Inject the Supabase `DATABASE_URL` into the **Render** backend environment.
-3. Deploy the backend to Render, using `npx prisma migrate deploy` in the build/start command to safely apply migrations.
-4. Deploy the frontend to **Vercel**, setting `VITE_API_URL` to the Render backend URL.
-5. Update Google Cloud Console with the production `GOOGLE_REDIRECT_URI`.
+All configurations are handled securely via environment variables (e.g., `DATABASE_URL`, `JWT_SECRET`, `GEMINI_API_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `FRONTEND_URL`, `PORT`, and `VITE_API_URL`).
 
 ## Google Calendar & OAuth
 
