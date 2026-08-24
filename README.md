@@ -34,6 +34,8 @@ A comprehensive full-stack application for managing healthcare appointments, pre
 
 The system uses a 3-tier architecture with a REST API backend. To maintain high responsiveness, all side-effects (emails, AI calls, Calendar syncing) are processed asynchronously. The backend uses `node-cron` for running the medication reminder scheduler and the email retry queue directly within the Express server instance.
 
+![Healthcare Appointment Manager - Database Schema](docs/images/database-schema.png)
+
 For more details, see the `docs/system-design-writeup.md`.
 
 ## Project Structure
@@ -145,22 +147,6 @@ When connecting your Google Calendar:
 ## SMTP Setup (Pending)
 
 Real SMTP credentials have intentionally been omitted from the repository for security. The notification architecture gracefully queues emails into the database (`EmailLog`). Until `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASS` are provided in the environment variables, the backend will log "Missing credentials" but the primary application flow (booking, reminders, leaves) will continue unaffected.
-
-## Testing
-
-The project includes an isolated integration test suite in the backend folder:
-
-```bash
-cd backend
-node test-auth.js
-node test-booking.js
-node test-slots.js
-node test-symptoms.js
-node test-notes.js
-node test-phase7.js
-node test-phase8.js
-```
-*Note: Tests generate their own ephemeral data and safely clean up after execution without modifying permanent records.*
 
 ## Security Notes
 
