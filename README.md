@@ -23,6 +23,10 @@ The system uses a 3-tier architecture with a REST API backend. To maintain high 
 
 [Architecture Documentation](docs/ARCHITECTURE.md)
 
+## Project Overview
+
+[Project Overview](docs/PROJECT_OVERVIEW.md)
+
 ## Quick Start
 
 ### 1. Database Setup

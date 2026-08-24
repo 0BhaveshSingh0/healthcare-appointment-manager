@@ -5,6 +5,43 @@
 
 The system uses a robust 3-tier web architecture. It relies on a React/Vite frontend, a Node.js/Express backend, and a PostgreSQL database. To ensure the critical paths (like appointment booking) remain lightning fast and highly resilient, all external side-effects (LLM summarization, email notifications, Google Calendar syncing) are processed asynchronously via persistent background workers.
 
+## System Architecture
+
+```text
+Healthcare Appointment Manager
+│
+├── Frontend (React + Vite)
+│   ├── Patient Portal
+│   ├── Doctor Portal
+│   ├── Admin Portal
+│   ├── Authentication
+│   └── API Client
+│
+├── Backend (Node.js + Express)
+│   ├── Authentication & Authorization
+│   ├── Appointment Management
+│   ├── Doctor Management
+│   ├── Symptom / AI Services
+│   ├── Visit Notes
+│   ├── Notifications
+│   ├── Google Calendar Integration
+│   ├── Leave Conflict Management
+│   └── Medication Reminders
+│
+├── Background Workers
+│   ├── Email Retry Worker
+│   └── Medication Reminder Scheduler
+│
+├── Database
+│   ├── Prisma ORM
+│   └── PostgreSQL / Supabase
+│
+└── External Services
+    ├── Google OAuth / Google Calendar
+    ├── Gemini / LLM
+    └── SMTP / Email Service
+```
+
 ## 2. Frontend Architecture
 
 The frontend is built as a Single Page Application (SPA) using React and Vite. It employs role-based routing (Patient, Doctor, Admin) to ensure secure access to different portals. UI state is managed locally with API calls handled securely by Axios interceptors that attach JWT tokens.
