@@ -1,0 +1,38 @@
+{
+  "doctorProfile": {
+    "specialisation": "Cardiology",
+    "slotDurationMinutes": 30,
+    "workingHoursJson": {
+      "monday": { "enabled": true, "start": "09:00", "end": "17:00" },
+      "tuesday": { "enabled": true, "start": "09:00", "end": "17:00" },
+      "wednesday": { "enabled": true, "start": "09:00", "end": "17:00" },
+      "thursday": { "enabled": true, "start": "09:00", "end": "17:00" },
+      "friday": { "enabled": true, "start": "09:00", "end": "17:00" },
+      "saturday": { "enabled": false, "start": null, "end": null },
+      "sunday": { "enabled": false, "start": null, "end": null }
+    }
+  },
+  "symptoms": {
+    "completed": {
+      "rawSymptomsText": "I have been experiencing a mild chest pain and shortness of breath for the past 2 days.",
+      "aiUrgency": "High",
+      "aiChiefComplaint": "Chest pain and shortness of breath",
+      "aiQuestionsJson": ["When exactly did the pain start?", "Does the pain radiate to your left arm?", "Do you have any history of heart conditions?"]
+    },
+    "active": {
+      "rawSymptomsText": "I have a persistent cough and mild fever.",
+      "aiUrgency": "Medium",
+      "aiChiefComplaint": "Persistent cough and fever",
+      "aiQuestionsJson": ["How long have you had the cough?", "What is your current temperature?", "Are you experiencing any body aches?"]
+    }
+  },
+  "visitNotes": {
+    "completed": {
+      "clinicalNotes": "Patient presented with mild chest pain. ECG shows normal sinus rhythm. Advised rest and prescribed mild pain relievers. Blood test ordered.",
+      "prescriptionJson": [
+        { "name": "Aspirin 81mg", "dosage": "1 tablet daily", "duration": "30 days" }
+      ],
+      "aiPatientSummary": "Your doctor reviewed your chest pain and shortness of breath. The ECG was normal. You have been advised to rest and take Aspirin 81mg daily. A blood test has been ordered for further evaluation."
+    }
+  }
+}

@@ -186,15 +186,15 @@ export default function PatientDashboard() {
               </div>
             ) : hasCalendar === true ? (
               <>
-                <h3 style={{ color: 'var(--success-text)', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '1.25rem' }}>ðŸ“…</span> Google Calendar Connected
+                <h3 style={{ color: 'var(--success-text)', margin: '0 0 8px 0' }}>
+                  Google Calendar Connected
                 </h3>
                 <p style={{ margin: 0, color: 'var(--success-text)', opacity: 0.9 }}>Your appointments can now be synchronized with your Google Calendar.</p>
               </>
             ) : (
               <>
-                <h3 style={{ color: 'var(--danger-text)', margin: '0 0 8px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '1.25rem' }}>ðŸ”´</span> Google Calendar Not Connected
+                <h3 style={{ color: 'var(--danger-text)', margin: '0 0 8px 0' }}>
+                  Google Calendar Not Connected
                 </h3>
                 <p style={{ margin: 0, color: 'var(--danger-text)', opacity: 0.9 }}>Connect your Google Calendar to receive reminders about your appointments.</p>
               </>
@@ -252,7 +252,6 @@ export default function PatientDashboard() {
             ))}
             {doctors.length === 0 && (
               <EmptyState 
-                icon="ðŸ©º" 
                 title="Find a Doctor" 
                 description="Search by specialisation to see available doctors and book an appointment." 
               />
@@ -349,7 +348,7 @@ export default function PatientDashboard() {
                         </td>
                         <td style={{ padding: '16px' }}>
                           {app.symptomForm ? (
-                            <span style={{ color: 'var(--success)', fontSize: '0.875rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>âœ“ Submitted</span>
+                            <span style={{ color: 'var(--success)', fontSize: '0.875rem', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Submitted</span>
                           ) : (
                             app.status === 'SCHEDULED' && (
                               <Button variant="ghost" onClick={() => handleOpenSymptomModal(app.id)} style={{ color: 'var(--warning)', padding: '4px 8px' }}>
@@ -380,7 +379,6 @@ export default function PatientDashboard() {
             </div>
           ) : (
             <EmptyState 
-              icon="ðŸ“…" 
               title="No upcoming appointments" 
               description="You don't have any appointments scheduled yet." 
               action={<Button onClick={() => { setView('SEARCH'); setSelectedDoctor(null); }}>Book Appointment</Button>}
