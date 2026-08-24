@@ -1,0 +1,8 @@
+
+# Local assignment/reference PDFs
+*.pdf
+
+# AI/IDE generated files
+backend/.agents/
+backend/.claude/
+backend/.windsurf/

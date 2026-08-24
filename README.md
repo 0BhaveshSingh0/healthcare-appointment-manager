@@ -1,0 +1,170 @@
+# Healthcare Appointment & Follow-up Manager
+
+A comprehensive full-stack application for managing healthcare appointments, pre-visit symptoms, post-visit notes, prescriptions, doctor leaves, and automated notifications/calendar integrations.
+
+## Main Features
+
+- **Authentication & Roles**: Secure JWT-based authentication for Patients, Doctors, and Admins.
+- **Appointment Booking Engine**: Atomic transaction-based booking that prevents double-booking and enforces concurrency safety via PostgreSQL unique constraints.
+- **Symptom Collection & AI Integration**: Patients submit pre-visit symptoms which are summarized by Google Gemini AI to highlight urgency and chief complaints.
+- **Post-Visit Notes & Summaries**: Doctors submit clinical notes and prescriptions, converted into patient-friendly summaries by AI.
+- **Medication Reminders**: Automated background jobs parse prescription frequency/duration and schedule recurring email reminders.
+- **Doctor Leave Cascade**: Admin leaves trigger an atomic cascade to safely cancel affected appointments, send notification emails, and remove Google Calendar events.
+- **Google Calendar Sync**: Full OAuth 2.0 integration to sync appointments to both the Doctor's and Patient's personal Google Calendars.
+- **Resilient Notifications**: Async email workers with retry and backoff mechanisms to ensure LLM or Email failures never block primary booking actions.
+
+## Technology Stack
+
+- **Frontend**: React, Vite, React Router
+- **Backend**: Node.js, Express.js
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Background Jobs**: node-cron (running in the persistent backend process)
+- **Integrations**: Google Gemini API, Google Calendar API (OAuth 2.0), Nodemailer
+
+## System Architecture Overview
+
+The system uses a 3-tier architecture with a REST API backend. To maintain high responsiveness, all side-effects (emails, AI calls, Calendar syncing) are processed asynchronously. The backend uses `node-cron` for running the medication reminder scheduler and the email retry queue directly within the Express server instance.
+
+For more details, see the `docs/system-design-writeup.md`.
+
+## Project Structure
+
+```
+.
+├── backend/
+│   ├── prisma/             # Database schema and migrations
+│   ├── src/
+│   │   ├── controllers/    # Route controllers
+│   │   ├── db/             # Prisma client instance
+│   │   ├── jobs/           # Cron workers (email retries, reminders)
+│   │   ├── middleware/     # Auth, error handling
+│   │   ├── routes/         # API routing
+│   │   ├── services/       # Core business logic
+│   │   └── app.js          # Express entrypoint
+│   └── .env.example
+├── frontend/
+│   ├── src/
+│   │   ├── api/            # Axios API client
+│   │   ├── components/     # Reusable UI components
+│   │   ├── context/        # React context (Auth)
+│   │   ├── pages/          # Dashboard views
+│   │   └── App.jsx
+│   └── .env.example
+└── docs/                   # Architectural documents and design write-ups
+```
+
+## Local Development Setup
+
+### 1. Database Setup
+
+Ensure you have PostgreSQL installed and running locally.
+Create a local database:
+```sql
+CREATE DATABASE healthcare_appointments;
+```
+
+### 2. Backend Setup
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+```
+
+Update your `backend/.env` with your actual database URL and API keys (do NOT commit this file).
+
+```bash
+# Apply database migrations
+npx prisma migrate dev
+
+# Start development server
+npm run dev
+```
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+npm install
+cp .env.example .env
+```
+
+Update your `frontend/.env` to point to the backend (default is `http://localhost:3000`).
+
+```bash
+# Start frontend server
+npm run dev
+```
+
+## Environment Variables
+
+**Backend (`backend/.env`)**
+- `DATABASE_URL`: PostgreSQL connection string.
+- `JWT_SECRET`: Secret for signing tokens.
+- `PORT`: Server port (default 3000).
+- `FRONTEND_URL`: CORS origin for the frontend.
+- `GEMINI_API_KEY`: API key for Google Gemini.
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: Google OAuth credentials.
+- `GOOGLE_REDIRECT_URI`: OAuth callback URL.
+- `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `FROM_EMAIL`: Nodemailer credentials.
+
+**Frontend (`frontend/.env`)**
+- `VITE_API_URL`: Backend API URL (default `http://localhost:3000`).
+
+## Deployment Architecture
+
+The application is designed for the following deployment stack:
+
+- **Frontend**: Vercel
+- **Backend & Background Workers**: Render Web Service or Railway
+  > *Note: Vercel Serverless Functions are not recommended for the backend as they cannot run the continuous background cron jobs required for Medication Reminders and Email Retries.*
+- **Database**: Supabase PostgreSQL
+
+### Production Deployment Steps (Future/Pending)
+
+1. Provision a **Supabase PostgreSQL** database.
+2. Inject the Supabase `DATABASE_URL` into the **Render** backend environment.
+3. Deploy the backend to Render, using `npx prisma migrate deploy` in the build/start command to safely apply migrations.
+4. Deploy the frontend to **Vercel**, setting `VITE_API_URL` to the Render backend URL.
+5. Update Google Cloud Console with the production `GOOGLE_REDIRECT_URI`.
+
+## Google Calendar & OAuth
+
+**Important: Timezone Requirement**
+For accurate slot calculation, the user's Google Calendar timezone must be set to `Asia/Kolkata` (IST, GMT+05:30). The database stores absolute UTC timestamps, but reminder and booking logic operates in IST.
+
+**Production OAuth Note for Examiners:**
+Because the app requests sensitive Calendar scopes, Google flags it as an "Unverified App" during the OAuth flow. This is expected for academic projects.
+When connecting your Google Calendar:
+1. Click **"Advanced"** on the warning screen.
+2. Click **"Go to app (unsafe)"** to proceed.
+3. The app will receive permissions, and you can safely close the popup.
+
+## SMTP Setup (Pending)
+
+Real SMTP credentials have intentionally been omitted from the repository for security. The notification architecture gracefully queues emails into the database (`EmailLog`). Until `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASS` are provided in the environment variables, the backend will log "Missing credentials" but the primary application flow (booking, reminders, leaves) will continue unaffected.
+
+## Testing
+
+The project includes an isolated integration test suite in the backend folder:
+
+```bash
+cd backend
+node test-auth.js
+node test-booking.js
+node test-slots.js
+node test-symptoms.js
+node test-notes.js
+node test-phase7.js
+node test-phase8.js
+```
+*Note: Tests generate their own ephemeral data and safely clean up after execution without modifying permanent records.*
+
+## Security Notes
+
+- No secrets or `.env` files are committed.
+- Passwords are hashed via bcrypt.
+- JWT is strictly enforced on all protected routes.
+- Backend CORS should be strictly configured to the `FRONTEND_URL` in production.
+- Database operations use parameterized queries/Prisma to prevent SQL injection.
