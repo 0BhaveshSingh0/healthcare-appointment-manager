@@ -496,7 +496,7 @@ const AdminDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {selectedDoctor && getNext7Days().map((dayInfo, idx) => {
+            {selectedDoctor?.doctorProfile && getNext7Days().map((dayInfo, idx) => {
               const leaves = selectedDoctor.doctorProfile.leaves || [];
               const isLeave = leaves.some(l => new Date(l.leaveDate).toISOString().split('T')[0] === dayInfo.dateString);
               const dayConfig = selectedDoctor.doctorProfile.workingHoursJson[dayInfo.dayName];
